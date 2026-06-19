@@ -99,7 +99,7 @@ class RadioEngine @Inject constructor(
     // ===================== 内部循环 =====================
 
     private suspend fun runRadioLoop() {
-        while (isActive) {
+        while (isLoopActive) {
             when (_state.value) {
                 is RadioState.Idle, is RadioState.Error -> {
                     // 首次或出错重启：进入加载
@@ -223,5 +223,5 @@ class RadioEngine @Inject constructor(
         return (text.length / 4 * 1000L).coerceIn(2000, 10000)
     }
 
-    private val CoroutineScope.isActive: Boolean get() = job?.isActive != false
+    private val CoroutineScope.isLoopActive: Boolean get() = job?.isActive != false
 }

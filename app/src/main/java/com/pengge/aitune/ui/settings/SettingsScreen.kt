@@ -92,7 +92,7 @@ fun SettingsScreen(
                 trailingIcon = {
                     IconButton(onClick = { showKeys = !showKeys }) {
                         Icon(
-                            if (showKeys) Icons.VisibilityOff else Icons.Visibility,
+                            if (showKeys) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
                             contentDescription = if (showKeys) "隐藏" else "显示",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )

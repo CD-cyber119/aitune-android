@@ -70,7 +70,7 @@ fun OnboardingScreen(
                         ),
                         shape = RoundedCornerShape(4.dp),
                         color = if (index <= currentStep) steps[currentStep].color
-                        else SurfaceVariant
+                        else MaterialTheme.colorScheme.surfaceVariant
                     ) {}
                 }
             }
@@ -92,7 +92,7 @@ fun OnboardingScreen(
                 text = steps[currentStep].title,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center
             )
 
