@@ -30,7 +30,8 @@ class MainActivity : ComponentActivity() {
 
             // 检查引导状态 & 主题设置
             LaunchedEffect(Unit) {
-                showOnboarding = !settingsRepository.isOnboardingDone()
+                val done = settingsRepository.isOnboardingDone()
+                showOnboarding = !done
                 val savedMode = settingsRepository.themeMode.first()
                 themeMode = when (savedMode) {
                     "light" -> ThemeMode.LIGHT
@@ -39,12 +40,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            val scope = rememberCoroutineScope()
             AituneTheme(themeMode = themeMode) {
                 val navController = rememberNavController()
                 AituneNavGraph(
                     navController = navController,
                     showOnboarding = showOnboarding,
                     onOnboardingDone = {
+                        scope.launch {
+                            settingsRepository.setOnboardingDone(true)
+                        }
                         showOnboarding = false
                     },
                     currentThemeMode = themeMode,

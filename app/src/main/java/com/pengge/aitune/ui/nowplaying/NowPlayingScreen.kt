@@ -205,8 +205,25 @@ fun NowPlayingScreen(
                 }
             }
 
-            // 启动按钮（空闲状态时）
-            if (uiState.statusLabel == "就绪") {
+            // 错误提示
+            if (uiState.isError && uiState.errorMessage != null) {
+                Surface(
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    Text(
+                        text = uiState.errorMessage,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+
+            // 启动按钮（空闲或出错时显示）
+            if (uiState.statusLabel == "就绪" || uiState.isError) {
                 Button(
                     onClick = { viewModel.startRadio() },
                     colors = ButtonDefaults.buttonColors(

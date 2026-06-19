@@ -180,20 +180,19 @@ class RadioEngine @Inject constructor(
             currentSegment = aiService.generateRadioSegment(context)
             true
         } catch (e: Exception) {
-            // 降级：用 fallback 串词 + 本地缓存歌单
-            val fallbackTracks = currentPlaylist?.tracks
-                ?.filterNot { it in playbackHistory }
-                ?.shuffled()
-                ?.take(2)
-                ?: emptyList()
-
-            currentSegment = RadioSegment(
-                intro = FallbackStrategy.randomIntro(),
-                tracks = fallbackTracks,
-                segue = FallbackStrategy.randomSegue()
-            )
-            // 失败也继续，不要死
-            true
+            val message = when {
+                e.message?.contains("API Key 未设置") == true ->
+                    "请先在设置页填入 DeepSeek API Key"
+                e.message?.contains("401") == true ||
+                    e.message?.contains("unauthorized", ignoreCase = true) == true ->
+                    "DeepSeek API Key 无效，请检查"
+                e.message?.contains("timeout", ignoreCase = true) == true ||
+                    e.message?.contains("Unable to resolve host", ignoreCase = true) == true ->
+                    "网络连接失败，请检查网络"
+                else -> "AI 请求失败: ${e.message?.take(80) ?: "未知错误"}"
+            }
+            _state.value = RadioState.Error(message)
+            false
         }
     }
 
