@@ -24,23 +24,36 @@ class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    val uiState: StateFlow<SettingsUiState> = combine(
+    data class KeyState(
+        val deepSeekKey: String?,
+        val mimoKey: String?,
+        val clientId: String?,
+        val clientSecret: String?
+    )
+
+    private val keyState: Flow<KeyState> = combine(
         settingsRepository.deepSeekApiKey,
         settingsRepository.mimoApiKey,
+        settingsRepository.spotifyClientId,
+        settingsRepository.spotifyClientSecret
+    ) { dk, mk, ci, cs ->
+        KeyState(dk, mk, ci, cs)
+    }
+
+    val uiState: StateFlow<SettingsUiState> = combine(
+        keyState,
         settingsRepository.ttsMode,
         settingsRepository.djLanguage,
-        settingsRepository.spotifyClientId,
-        settingsRepository.spotifyClientSecret,
         settingsRepository.themeMode
-    ) { keys ->
+    ) { keys, tts, lang, theme ->
         SettingsUiState(
-            deepSeekKey = keys[0] ?: "",
-            mimoKey = keys[1] ?: "",
-            ttsMode = keys[2],
-            djLanguage = keys[3],
-            spotifyClientId = keys[4] ?: "",
-            spotifyClientSecret = keys[5] ?: "",
-            themeMode = keys[6]
+            deepSeekKey = keys.deepSeekKey ?: "",
+            mimoKey = keys.mimoKey ?: "",
+            ttsMode = tts,
+            djLanguage = lang,
+            spotifyClientId = keys.clientId ?: "",
+            spotifyClientSecret = keys.clientSecret ?: "",
+            themeMode = theme
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SettingsUiState())
 
