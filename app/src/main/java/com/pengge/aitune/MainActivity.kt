@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
+import androidx.navigation.compose.rememberNavController
 import com.pengge.aitune.data.repository.SettingsRepository
 import com.pengge.aitune.ui.navigation.AituneNavGraph
 import com.pengge.aitune.ui.theme.AituneTheme
@@ -39,7 +40,9 @@ class MainActivity : ComponentActivity() {
             }
 
             AituneTheme(themeMode = themeMode) {
+                val navController = rememberNavController()
                 AituneNavGraph(
+                    navController = navController,
                     showOnboarding = showOnboarding,
                     onOnboardingDone = {
                         showOnboarding = false
