@@ -3,6 +3,7 @@ package com.pengge.aitune.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pengge.aitune.data.repository.SettingsRepository
+import com.pengge.aitune.ui.theme.ThemeMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -14,7 +15,8 @@ data class SettingsUiState(
     val ttsMode: String = "system",
     val djLanguage: String = "casual",
     val spotifyClientId: String = "",
-    val spotifyClientSecret: String = ""
+    val spotifyClientSecret: String = "",
+    val themeMode: String = "system"
 )
 
 @HiltViewModel
@@ -28,7 +30,8 @@ class SettingsViewModel @Inject constructor(
         settingsRepository.ttsMode,
         settingsRepository.djLanguage,
         settingsRepository.spotifyClientId,
-        settingsRepository.spotifyClientSecret
+        settingsRepository.spotifyClientSecret,
+        settingsRepository.themeMode
     ) { keys ->
         SettingsUiState(
             deepSeekKey = keys[0] ?: "",
@@ -36,7 +39,8 @@ class SettingsViewModel @Inject constructor(
             ttsMode = keys[2],
             djLanguage = keys[3],
             spotifyClientId = keys[4] ?: "",
-            spotifyClientSecret = keys[5] ?: ""
+            spotifyClientSecret = keys[5] ?: "",
+            themeMode = keys[6]
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SettingsUiState())
 
@@ -62,5 +66,9 @@ class SettingsViewModel @Inject constructor(
 
     fun saveSpotifyClientSecret(secret: String) = viewModelScope.launch {
         settingsRepository.setSpotifyClientSecret(secret)
+    }
+
+    fun saveThemeMode(mode: String) = viewModelScope.launch {
+        settingsRepository.setThemeMode(mode)
     }
 }

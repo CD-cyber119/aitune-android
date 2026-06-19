@@ -18,16 +18,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.pengge.aitune.ui.theme.*
 import com.pengge.aitune.ui.radio.StateIndicator
+import com.pengge.aitune.ui.theme.ThemeMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NowPlayingScreen(
     onOpenSettings: () -> Unit = {},
+    currentThemeMode: ThemeMode = ThemeMode.SYSTEM,
+    onThemeChanged: (ThemeMode) -> Unit = {},
     viewModel: NowPlayingViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -35,18 +36,28 @@ fun NowPlayingScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Aitune") },
+                title = {
+                    Text(
+                        "Aitune",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                },
                 actions = {
                     IconButton(onClick = onOpenSettings) {
-                        Icon(Icons.Outlined.Settings, contentDescription = "设置")
+                        Icon(
+                            Icons.Outlined.Settings,
+                            contentDescription = "设置",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DarkBackground
+                    containerColor = MaterialTheme.colorScheme.background
                 )
             )
         },
-        containerColor = DarkBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -63,7 +74,7 @@ fun NowPlayingScreen(
                 modifier = Modifier
                     .size(280.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(SurfaceColor),
+                    .background(MaterialTheme.colorScheme.surface),
                 contentAlignment = Alignment.Center
             ) {
                 if (!uiState.albumArtUrl.isNullOrBlank()) {
@@ -78,7 +89,7 @@ fun NowPlayingScreen(
                         Icons.Filled.MusicNote,
                         contentDescription = null,
                         modifier = Modifier.size(80.dp),
-                        tint = TextMuted
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                     )
                 }
             }
@@ -100,7 +111,7 @@ fun NowPlayingScreen(
                 text = uiState.trackTitle,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onBackground,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
@@ -112,7 +123,7 @@ fun NowPlayingScreen(
             Text(
                 text = uiState.trackArtist,
                 style = MaterialTheme.typography.titleMedium,
-                color = TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -126,8 +137,8 @@ fun NowPlayingScreen(
                     .fillMaxWidth()
                     .height(4.dp)
                     .clip(RoundedCornerShape(2.dp)),
-                color = PrimaryPink,
-                trackColor = SurfaceVariant
+                color = MaterialTheme.colorScheme.primary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant
             )
 
             Spacer(Modifier.height(24.dp))
@@ -141,7 +152,7 @@ fun NowPlayingScreen(
                     Icon(
                         Icons.Filled.SkipPrevious,
                         contentDescription = "上一首",
-                        tint = TextPrimary,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -151,12 +162,12 @@ fun NowPlayingScreen(
                     modifier = Modifier
                         .size(64.dp)
                         .clip(CircleShape)
-                        .background(PrimaryPink)
+                        .background(MaterialTheme.colorScheme.primary)
                 ) {
                     Icon(
                         if (uiState.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                         contentDescription = if (uiState.isPlaying) "暂停" else "播放",
-                        tint = TextPrimary,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(36.dp)
                     )
                 }
@@ -165,7 +176,7 @@ fun NowPlayingScreen(
                     Icon(
                         Icons.Filled.SkipNext,
                         contentDescription = "下一首",
-                        tint = TextPrimary,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -180,14 +191,14 @@ fun NowPlayingScreen(
                 exit = fadeOut() + slideOutVertically()
             ) {
                 Surface(
-                    color = SurfaceVariant,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
                     Text(
                         text = uiState.djSubtitle ?: "",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -198,7 +209,9 @@ fun NowPlayingScreen(
             if (uiState.statusLabel == "就绪") {
                 Button(
                     onClick = { viewModel.startRadio() },
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryPink),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
                     modifier = Modifier
                         .padding(bottom = 32.dp)
                         .height(48.dp)

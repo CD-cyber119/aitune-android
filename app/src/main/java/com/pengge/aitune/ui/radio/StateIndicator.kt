@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.pengge.aitune.ui.theme.*
 
 /** 状态指示器 — 显示当前电台状态（思考/说话/播放/错误） */
 @Composable
@@ -24,10 +23,10 @@ fun StateIndicator(
 ) {
     val indicatorColor by animateColorAsState(
         targetValue = when {
-            isError -> StateError
-            isLoading -> StateLoading
-            isPlaying -> StatePlaying
-            else -> TextMuted
+            isError -> MaterialTheme.colorScheme.error
+            isLoading -> MaterialTheme.colorScheme.tertiary
+            isPlaying -> MaterialTheme.colorScheme.primary
+            else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
         },
         label = "stateIndicatorColor"
     )
@@ -45,7 +44,7 @@ fun StateIndicator(
         Text(
             text = statusLabel,
             style = MaterialTheme.typography.bodySmall,
-            color = TextMuted
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

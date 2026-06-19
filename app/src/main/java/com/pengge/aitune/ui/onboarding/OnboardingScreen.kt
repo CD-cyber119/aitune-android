@@ -14,37 +14,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.pengge.aitune.ui.theme.*
-
 /** 三步引导 — 首次使用 */
 @Composable
 fun OnboardingScreen(
     onComplete: () -> Unit = {}
 ) {
     var currentStep by remember { mutableIntStateOf(0) }
+    val colors = MaterialTheme.colorScheme
     val steps = listOf(
         OnboardingStep(
             icon = Icons.Filled.Radio,
             title = "欢迎来到 Aitune",
             description = "你的个人 AI 电台。\nAI 读懂你的听歌习惯，像真 DJ 一样为你播歌、讲故事。",
-            color = PrimaryPink
+            color = colors.primary
         ),
         OnboardingStep(
             icon = Icons.Filled.KeyboardVoice,
             title = "配置 API Key",
             description = "先去「设置」页填入 DeepSeek 和 MiMo TTS 的 Key，\n这是 AI 说话和推荐歌曲的动力。",
-            color = PrimaryBlue
+            color = colors.secondary
         ),
         OnboardingStep(
             icon = Icons.Filled.LibraryMusic,
             title = "连接 Spotify",
             description = "登录你的 Spotify Premium 账号，\n选择想听的歌单，电台就准备好了。",
-            color = AccentGreen
+            color = colors.tertiary
         )
     )
 
     Scaffold(
-        containerColor = DarkBackground
+        containerColor = colors.background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -103,7 +102,7 @@ fun OnboardingScreen(
             Text(
                 text = steps[currentStep].description,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TextSecondary,
+                color = colors.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
             )
@@ -139,7 +138,7 @@ fun OnboardingScreen(
             // 跳过按钮
             if (currentStep < steps.size - 1) {
                 TextButton(onClick = onComplete) {
-                    Text("跳过引导", color = TextMuted)
+                    Text("跳过引导", color = colors.onSurfaceVariant.copy(alpha = 0.7f))
                 }
             }
         }

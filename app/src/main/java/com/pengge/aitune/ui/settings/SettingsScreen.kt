@@ -2,8 +2,6 @@ package com.pengge.aitune.ui.settings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -12,7 +10,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -21,16 +18,22 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.pengge.aitune.ui.theme.*
+import com.pengge.aitune.ui.theme.ThemeMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit = {},
+    currentThemeMode: ThemeMode = ThemeMode.SYSTEM,
+    onThemeChanged: (ThemeMode) -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var showKey by remember { mutableStateOf(false) }
+    var showKeys by remember { mutableStateOf(false) }
+
+    val sectionTitleColor = MaterialTheme.colorScheme.primary
+    val sectionTitleColor2 = MaterialTheme.colorScheme.secondary
+    val sectionTitleColor3 = MaterialTheme.colorScheme.tertiary
 
     Scaffold(
         topBar = {
@@ -42,11 +45,11 @@ fun SettingsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DarkBackground
+                    containerColor = MaterialTheme.colorScheme.background
                 )
             )
         },
-        containerColor = DarkBackground
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Column(
             modifier = Modifier
@@ -61,7 +64,7 @@ fun SettingsScreen(
                 "API 配置",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = PrimaryPink
+                color = sectionTitleColor
             )
 
             // DeepSeek
@@ -69,29 +72,29 @@ fun SettingsScreen(
                 value = uiState.deepSeekKey,
                 onValueChange = { viewModel.saveDeepSeekKey(it) },
                 label = { Text("DeepSeek API Key") },
-                placeholder = { Text("sk-xxxxxxxx") },
+                placeholder = { Text("***") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = PrimaryPink,
-                    unfocusedBorderColor = SurfaceVariant,
-                    focusedLabelColor = PrimaryPink,
-                    cursorColor = TextPrimary,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextSecondary
+                    focusedBorderColor = sectionTitleColor,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedLabelColor = sectionTitleColor,
+                    cursorColor = MaterialTheme.colorScheme.onSurface,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                visualTransformation = if (showKey) VisualTransformation.None
+                visualTransformation = if (showKeys) VisualTransformation.None
                 else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
                 trailingIcon = {
-                    IconButton(onClick = { showKey = !showKey }) {
+                    IconButton(onClick = { showKeys = !showKeys }) {
                         Icon(
-                            if (showKey) Icons.VisibilityOff else Icons.Visibility,
-                            contentDescription = if (showKey) "隐藏" else "显示",
-                            tint = TextMuted
+                            if (showKeys) Icons.VisibilityOff else Icons.Visibility,
+                            contentDescription = if (showKeys) "隐藏" else "显示",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -102,18 +105,18 @@ fun SettingsScreen(
                 value = uiState.mimoKey,
                 onValueChange = { viewModel.saveMimoKey(it) },
                 label = { Text("小米 MiMo TTS API Key") },
-                placeholder = { Text("sk-xxxxxxxx") },
+                placeholder = { Text("***") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = PrimaryBlue,
-                    unfocusedBorderColor = SurfaceVariant,
-                    focusedLabelColor = PrimaryBlue,
-                    cursorColor = TextPrimary,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextSecondary
+                    focusedBorderColor = sectionTitleColor2,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedLabelColor = sectionTitleColor2,
+                    cursorColor = MaterialTheme.colorScheme.onSurface,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                visualTransformation = if (showKey) VisualTransformation.None
+                visualTransformation = if (showKeys) VisualTransformation.None
                 else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
@@ -121,20 +124,20 @@ fun SettingsScreen(
                 )
             )
 
-            HorizontalDivider(color = SurfaceVariant)
+            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
 
             // ====== 第二部分：语音设置 ======
             Text(
                 "语音设置",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = PrimaryBlue
+                color = sectionTitleColor2
             )
 
             Text(
                 "TTS 模式",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -144,8 +147,8 @@ fun SettingsScreen(
                     onClick = { viewModel.saveTTSMode("system") },
                     label = { Text("系统TTS") },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = PrimaryBlue.copy(alpha = 0.2f),
-                        selectedLabelColor = PrimaryBlue
+                        selectedContainerColor = sectionTitleColor2.copy(alpha = 0.2f),
+                        selectedLabelColor = sectionTitleColor2
                     )
                 )
                 FilterChip(
@@ -153,8 +156,8 @@ fun SettingsScreen(
                     onClick = { viewModel.saveTTSMode("mimo") },
                     label = { Text("小米MiMo") },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = PrimaryBlue.copy(alpha = 0.2f),
-                        selectedLabelColor = PrimaryBlue
+                        selectedContainerColor = sectionTitleColor2.copy(alpha = 0.2f),
+                        selectedLabelColor = sectionTitleColor2
                     )
                 )
             }
@@ -164,7 +167,7 @@ fun SettingsScreen(
             Text(
                 "DJ 语体风格",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextMuted
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -175,21 +178,61 @@ fun SettingsScreen(
                         onClick = { viewModel.saveDJLanguage(id) },
                         label = { Text(name) },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = PrimaryPink.copy(alpha = 0.2f),
-                            selectedLabelColor = PrimaryPink
+                            selectedContainerColor = sectionTitleColor.copy(alpha = 0.2f),
+                            selectedLabelColor = sectionTitleColor
                         )
                     )
                 }
             }
 
-            HorizontalDivider(color = SurfaceVariant)
+            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
+
+            // ====== 主题切换 ======
+            Text(
+                "主题模式",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = sectionTitleColor3
+            )
+
+            Text(
+                "外观",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf("system" to "跟随系统", "light" to "橘子海", "dark" to "深夜电台").forEach { (id, name) ->
+                    FilterChip(
+                        selected = uiState.themeMode == id,
+                        onClick = {
+                            viewModel.saveThemeMode(id)
+                            onThemeChanged(
+                                when (id) {
+                                    "light" -> ThemeMode.LIGHT
+                                    "dark" -> ThemeMode.DARK
+                                    else -> ThemeMode.SYSTEM
+                                }
+                            )
+                        },
+                        label = { Text(name) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = sectionTitleColor3.copy(alpha = 0.2f),
+                            selectedLabelColor = sectionTitleColor3
+                        )
+                    )
+                }
+            }
+
+            HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
 
             // ====== 第三部分：Spotify ======
             Text(
                 "Spotify 配置",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = AccentGreen
+                color = sectionTitleColor3
             )
 
             OutlinedTextField(
@@ -199,12 +242,12 @@ fun SettingsScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AccentGreen,
-                    unfocusedBorderColor = SurfaceVariant,
-                    focusedLabelColor = AccentGreen,
-                    cursorColor = TextPrimary,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextSecondary
+                    focusedBorderColor = sectionTitleColor3,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedLabelColor = sectionTitleColor3,
+                    cursorColor = MaterialTheme.colorScheme.onSurface,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
 
@@ -215,12 +258,12 @@ fun SettingsScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AccentGreen,
-                    unfocusedBorderColor = SurfaceVariant,
-                    focusedLabelColor = AccentGreen,
-                    cursorColor = TextPrimary,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextSecondary
+                    focusedBorderColor = sectionTitleColor3,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedLabelColor = sectionTitleColor3,
+                    cursorColor = MaterialTheme.colorScheme.onSurface,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(

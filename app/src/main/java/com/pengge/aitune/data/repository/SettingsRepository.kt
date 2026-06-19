@@ -30,6 +30,7 @@ class SettingsRepository @Inject constructor(
         private val KEY_DJ_LANGUAGE = stringPreferencesKey("dj_language")
         private val KEY_SELECTED_PLAYLIST_ID = stringPreferencesKey("selected_playlist_id")
         private val KEY_ONBOARDING_DONE = stringPreferencesKey("onboarding_done")
+        private val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
     }
 
     // --- DeepSeek ---
@@ -100,6 +101,14 @@ class SettingsRepository @Inject constructor(
 
     suspend fun setOnboardingDone(done: Boolean) {
         context.settingsDataStore.edit { it[KEY_ONBOARDING_DONE] = done.toString() }
+    }
+
+    // --- 主题模式 ---
+    val themeMode: Flow<String> = context.settingsDataStore.data
+        .map { it[KEY_THEME_MODE] ?: "system" }
+
+    suspend fun setThemeMode(mode: String) {
+        context.settingsDataStore.edit { it[KEY_THEME_MODE] = mode }
     }
 
     // --- 便捷读取（非 Flow） ---
