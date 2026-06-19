@@ -2,6 +2,7 @@ package com.pengge.aitune.domain.music
 
 import android.content.Context
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.pengge.aitune.domain.model.Track
@@ -78,8 +79,12 @@ class ExoMusicPlayer @Inject constructor(
         val mediaItem = MediaItem.Builder()
             .setMediaId(track.id)
             .setUri(url)
-            .setTitle(track.title)
-            .setArtist(track.artist)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(track.title)
+                    .setArtist(track.artist)
+                    .build()
+            )
             .build()
 
         player.setMediaItem(mediaItem)

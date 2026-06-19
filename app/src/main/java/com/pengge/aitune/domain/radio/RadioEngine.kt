@@ -143,7 +143,7 @@ class RadioEngine @Inject constructor(
             delay(calculateTTSDuration(segment.segue))
 
             // 预取下一段（后台）
-            launch { prefetchNextSegment() }
+            scope.launch { prefetchNextSegment() }
 
             // 切换到下一段
             val next = prefetchedSegment
@@ -223,5 +223,5 @@ class RadioEngine @Inject constructor(
         return (text.length / 4 * 1000L).coerceIn(2000, 10000)
     }
 
-    private val CoroutineScope.isLoopActive: Boolean get() = job?.isActive != false
+    private val isLoopActive: Boolean get() = job?.isActive != false
 }
